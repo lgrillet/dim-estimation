@@ -31,9 +31,10 @@ def torus_distance(a,b,maxima):
 # e1 > e2 : scales
 # torus : True to compute in the torus of size maxima
 # maxima : only used if torus is at True
+# full_output: True to return number of pairs in addition to the dimension
 # mute : True to disable every print
 
-def corsum(cloud, e1, e2, torus=False, maxima=[], mute=False):
+def corsum(cloud, e1, e2, torus=False, maxima=[], full_output=False, mute=False):
     if len(cloud)==0:    
         print("The cloud of points is empty.")
         return -1 # Returns error
@@ -45,7 +46,7 @@ def corsum(cloud, e1, e2, torus=False, maxima=[], mute=False):
             return -1 # Returns error
     else:
         dist = distance
-    N=len(cloud)
+    n=len(cloud)
     count1=0 # Number of points at distance at most e1
     count2=0 # Number of points at distance at most e2
 
@@ -78,7 +79,7 @@ def corsum(cloud, e1, e2, torus=False, maxima=[], mute=False):
                 if d<e2:
                     count2+=1
         if (j+1)%1000 == 0 and not mute:
-            print("Computing distances:",j+1,"/",N, "points.", end="\r")
+            print("Computing distances:",j+1,"/",n , "points.", end="\r")
 
     # review the results
     if count2==0:
@@ -94,4 +95,6 @@ def corsum(cloud, e1, e2, torus=False, maxima=[], mute=False):
     dimension = log(count2/count1)/log(e2/e1)
     if not mute:
         print("The correlation dimension is", dimension)
+    if full_output:
+        return [count1, count2, dimension]
     return dimension

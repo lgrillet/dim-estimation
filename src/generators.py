@@ -23,16 +23,16 @@ def interpolate(a, b, t):
 # Sampler - Uniform Box              #
 ######################################
 ### Samples points uniformly in [0,x1_max]*...*[0,xd_max]
-# N : number of points sampled
+# n : number of points sampled
 # dimension : ambiant dimension
 # maxima : [x1_max, x2_max, ..., xd_max]
 
-def box_sample(N, dimension, maxima):
+def box_sample(n, dimension, maxima):
     if len(maxima) != dimension:
         print("The number of maxima is different from the dimension.\n")
         return np.array([])
-    cloud = np.zeros([N,dimension])
-    for i in range(N):
+    cloud = np.zeros([n,dimension])
+    for i in range(n):
         point = []
         for j in range(dimension):
             point.append(random.random()*maxima[j])
@@ -43,19 +43,24 @@ def box_sample(N, dimension, maxima):
 # Sampler - Gaussian                 #
 ######################################
 ### Samples points from  a normal distribution
-# N : number of points sampled
+# n : number of points sampled
 # dimension : ambiant dimension
 # sigmas : list of standard deviations for each direction
+# maxima : define bounds [-x1_max,x1_max]*...*[-xd_max,xd_max], -1 for no bound
 
-def gaussian_sample(N, dimension, sigmas):
+def gaussian_sample(n, dimension, sigmas, maxima=-1):
     if len(sigmas) != dimension:
         print("The number of sigmas is different from the dimension.\n")
         return np.array([])
-    cloud = np.zeros([N,dimension])
-    for i in range(N):
+    cloud = np.zeros([n,dimension])
+    for i in range(n):
         point = []
         for j in range(dimension):
-            point.append(random.normalvariate(0, sigmas[j]))
+            x = random.normalvariate(0, sigmas[j])
+            if maxima != -1:
+                while abs(x) > maxima[j]:
+                    x = random.normalvariate(0, sigmas[j])
+            point.append(x)
         cloud[i] = point
     return cloud
     
@@ -63,15 +68,15 @@ def gaussian_sample(N, dimension, sigmas):
 # Sampler - Sphere                   #
 ######################################
 ### Samples points uniformly in an hypersphere
-# N : number of points sampled
+# n : number of points sampled
 # dimension : dimension of the sphere (in ambiant dimension "dimension+1")
 # radius : radius of the sphere
 # copies : number of disjoint copies of the sphere
 
-def sphere_sample(N, dimension, radius=1, copies=1):
+def sphere_sample(n, dimension, radius=1, copies=1):
     dimension = dimension+1
-    cloud = np.zeros([N,dimension])
-    for i in range(N):
+    cloud = np.zeros([n,dimension])
+    for i in range(n):
         point = []
         for j in range(dimension):
             point.append(random.normalvariate(0, 1))
@@ -84,14 +89,14 @@ def sphere_sample(N, dimension, radius=1, copies=1):
 ######################################
 # Sampler - Torus in 4D              #
 ######################################
-# N : number of points sampled
+# n : number of points sampled
 # dimension : dimension of the torus (in ambiant dimension "2 * dimension")
 
-def clifford_torus_sample(N, dimension, radii=-1):
+def clifford_torus_sample(n, dimension, radii=-1):
     if radii == -1:
         radii = [1]*dimension
-    cloud = np.zeros([N,2*dimension])
-    for i in range(N):
+    cloud = np.zeros([n,2*dimension])
+    for i in range(n):
         point = []
         for j in range(dimension):
             angle = random.random()*2*pi
@@ -103,15 +108,15 @@ def clifford_torus_sample(N, dimension, radii=-1):
 ######################################
 # Sampler - Torus in 3D              #
 ######################################
-# N : number of points sampled
+# n : number of points sampled
 # dimension : dimension of the torus (in ambiant dimension "3/2 * dimension")
 
-def torus_sample(N, dimension, R=2, r=1, mute=False):
-    if N%2 != 0:
+def torus_sample(n, dimension, R=2, r=1, mute=False):
+    if n%2 != 0:
         print("Error: the dimension must be even.")
         return np.array([])
     points = []
-    for i in range(N):
+    for i in range(n):
         point = []
         count = int(dimension/2)
         while count > 0:
@@ -138,18 +143,18 @@ def torus_sample(N, dimension, R=2, r=1, mute=False):
 ### 'thickness' of the implicit manifold defined by the equation function = 0.
 ###  Then bring those points closer to this manifold.
 # maxima : [x1_max, x2_max, ..., xd_max]
-# N : number of points sampled
+# n : number of points sampled
 # d : ambiant dimension d
 # function : a function f taking d numbers and returning d+1 numbers :
 #    f(x), df/dx1(x), ..., df/dxd(x)
-# returns a numpy array of N d-dimensional points
+# returns a numpy array of n d-dimensional points
 
-def implicit_sample(maxima, thickness, N, dimension, function):
+def implicit_sample(maxima, thickness, n, dimension, function):
     start = time.time()
-    print("Generating a cloud of", N, "points...")
-    cloud = np.zeros([N,dimension])
+    print("Generating a cloud of", n, "points...")
+    cloud = np.zeros([n,dimension])
     count = 0
-    while count < N:
+    while count < n:
         point=[]
         random.seed(time.time()+count)
         for j in range(dimension):
@@ -162,7 +167,7 @@ def implicit_sample(maxima, thickness, N, dimension, function):
             cloud[count]=point
             count += 1
             if (count%100==0):
-                print("\r", count, "/", N, "points generated",end="")
+                print("\r", count, "/", n, "points generated",end="")
     print("\nIt took", time.time()-start, "seconds\n")
     return cloud
 

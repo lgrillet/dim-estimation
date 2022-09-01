@@ -194,3 +194,57 @@ def schwarz(p):
     gy = -sin(p[1])*pi/2
     gz = -sin(p[2])*pi/2
     return[f,[gx,gy,gz]]
+
+# 2D Perlin noise
+
+def perlin_2d(grid_size, x_max, y_max, seed):
+    """Noisy function in R^2.
+
+    Arguments:
+    grid_size -- size of the random pattern
+    x_max -- 
+    """
+    def function(point):
+        return perlin_2d_explicit(
+            point[0], 
+            point[1], 
+            grid_size, 
+            x_max, 
+            y_max, 
+            seed)
+    return function
+
+def perlin_2d_explicit(x, y, grid_size, x_max, y_max, seed):
+    grid_x = floor(x/grid_size)
+    grid_y = floor(y/grid_size)
+    frac_x = (x%grid_size)/grid_size
+    frac_y = (y%grid_size)/grid_size
+    a = perlin_2d_rand(grid_x  , grid_y  , x_max, y_max, seed)
+    b = perlin_2d_rand(grid_x+1, grid_y  , x_max, y_max, seed)
+    c = perlin_2d_rand(grid_x  , grid_y+1, x_max, y_max, seed)
+    d = perlin_2d_rand(grid_x+1, grid_y+1, x_max, y_max, seed)
+    r = perlin_2d_evaluate(a, b, c, d, frac_x, frac_y)
+    dx, dy = perlin_2d_gradient(a, b, c, d, frac_x, frac_y)
+    return r-0.5, [dx, dy]
+
+def perlin_2d_evaluate(a, b, c, d, x, y):
+    r = interpolate(interpolate(a,b,x),interpolate(c,d,x),y)
+    return r
+
+def perlin_2d_gradient(a, b, c, d, x, y):
+    dx = 6*(d-c)*(x-x*x)*(3.*y*y-2.*y*y*y) + 6*(b-a)*(x-x*x)*(1-3*y*y+2*y*y*y)
+    dy = 6*(d-b)*(y-y*y)*(3.*x*x-2.*x*x*x) + 6*(c-a)*(y-y*y)*(1-3*x*x+2*x*x*x)
+    return [dx,dy]
+
+def perlin_2d_rand(x, y, x_max, y_max, seed):
+    random.seed(hash((x,y,seed)))
+    r = random.random()
+    if r<0.5:
+        r -= 0.1
+    else:
+        r += 0.1
+    if (x<=0) or (y<=0) or (x>=x_max-1) or (y>=y_max) or (x%2==0 and y%2==0):
+        r=0
+    elif (x%2==1 and y%2==1):
+        r=1
+    return r

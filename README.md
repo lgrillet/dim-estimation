@@ -18,7 +18,9 @@ The code is divided into two kind of files: Python files regrouping the main fun
 
 - **pairs.ipynb:** We compute the number of pairs required to obtain the desired rate of success with given scales.*
 
-- **testing.ipynb:** We test the estimator on different manifolds.
+- **examples.ipynb:** Two examples of generations of data sets and estimations of dimension.
+
+- **testing.ipynb:** Testing the estimator on different manifolds.
 
 - **anova.ipynb:** We estimate the dimension of two manifolds with the estimator of the article and with ANOVA, using the same number of points.
 

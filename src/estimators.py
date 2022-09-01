@@ -106,7 +106,7 @@ def corsum(cloud, e1, e2, noboxes=False, pairs=-1,
             if pairs > 0:
                 if count1 >= pairs:
                     break
-            if (j+1)%500 == 0 and not mute:
+            if (i+1)%10 == 0 and not mute:
                 print("Computing distances:",i+1,"/",n , "points.", end="\r")
     
     # faster algorithm for low dimensions
@@ -152,8 +152,7 @@ def corsum(cloud, e1, e2, noboxes=False, pairs=-1,
     if count2==0:
         if not mute:
             print("There are no pairs of points at distance", e2)
-        if count1==0 and not mute:
-            print("And here are no pairs of points at distance", e1)
+            print("And", count1, "pairs of points at distance", e1)
         return -1 # Returns error
     if not mute:
         print("There are", count1, "pairs of points at distance at most", e1)
@@ -167,7 +166,7 @@ def corsum(cloud, e1, e2, noboxes=False, pairs=-1,
         print("The correlation dimension is", dimension)
     return dimension
 
-def count_scales(cloud, scales, torus=False, maxima=[], mute=False):
+def count_scales(cloud, scales, noboxes=False, torus=False, maxima=[], mute=False):
     """Count the number of pairs at different scales.
     Useful for the log-log plots.
 
@@ -195,36 +194,49 @@ def count_scales(cloud, scales, torus=False, maxima=[], mute=False):
     # count the number of pairs
     counts=[0]*len(scales)
 
-    boxes = defaultdict(set)
-    shifts = [[x-1 for x in i] for i in 
-              itertools.product(range(3), repeat=len(cloud[0]))]
+    if noboxes:
+        for i, point in enumerate(cloud):
+            for j, point2 in enumerate(cloud):
+                d = dist(point, point2)
+                for k, scale in enumerate(scales):
+                    if d<scale and j<i:
+                        counts[k] += 1
 
-    for i, point in enumerate(cloud):
+            if (i+1)%10 == 0 and not mute:
+                print("Computing distances:",i+1,"/",n , "points.", end="\r")
+        
 
-        e0 = max(scales)
-        hashed = [floor(x/(2*e0)) for x in point]
-        if torus:
-            for k, x in enumerate(hashed):
-                if (x+1)*2*e0>maxima[k]:
-                    hashed[k] = x-floor(maxima[k]/(2*e0))
+    else:
+        boxes = defaultdict(set)
+        shifts = [[x-1 for x in i] for i in 
+                itertools.product(range(3), repeat=len(cloud[0]))]
 
-        for l in boxes[tuple(hashed)]:
-            d = dist(point, cloud[l])
+        for i, point in enumerate(cloud):
 
-            for j, scale in enumerate(scales):
-                if d<scale:
-                    counts[j] += 1
-
-        for shift in shifts:
-            box = [x+i for x,i in zip(hashed,shift)]
+            e0 = max(scales)
+            hashed = [floor(x/(2*e0)) for x in point]
             if torus:
-                for k, x in enumerate(box):
+                for k, x in enumerate(hashed):
                     if (x+1)*2*e0>maxima[k]:
-                        box[k] = x-floor(maxima[k]/(2*e0))
-            boxes[tuple(box)].add(i)
+                        hashed[k] = x-floor(maxima[k]/(2*e0))
 
-        if (i+1)%250 == 0 and not mute:
-            print("Computing distances:",i+1,"/",n , "points.", end="\r")
+            for l in boxes[tuple(hashed)]:
+                d = dist(point, cloud[l])
+
+                for j, scale in enumerate(scales):
+                    if d<scale:
+                        counts[j] += 1
+
+            for shift in shifts:
+                box = [x+i for x,i in zip(hashed,shift)]
+                if torus:
+                    for k, x in enumerate(box):
+                        if (x+1)*2*e0>maxima[k]:
+                            box[k] = x-floor(maxima[k]/(2*e0))
+                boxes[tuple(box)].add(i)
+
+            if (i+1)%250 == 0 and not mute:
+                print("Computing distances:",i+1,"/",n , "points.", end="\r")
 
     return counts
 

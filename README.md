@@ -1,4 +1,4 @@
-This repository presents the code used in the article "*Effective estimation of the dimension of a manifold from random samples*".
+This repository presents the code used in the article "*Effective estimation of the dimension of a manifold from random samples*" whose preprint is available on arXiv: [https://arxiv.org/abs/2209.01839](https://arxiv.org/abs/2209.01839).
 
 ***
 

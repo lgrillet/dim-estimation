@@ -2,6 +2,21 @@ This repository presents the code used in the article "*Effective estimation of 
 
 ***
 
+The programm is designed to do 3 different tasks :
+
+1) Create samples of points randomly and uniformly chosen on different submanifolds of R<sup>n</sup>.
+
+2) Estimate the dimension of a given sample of points, using different algorithms.
+
+3) Compute various numbers used in the aforementioned article.
+
+The two first tasks are presentend in the notebook **examples.ipynb**.
+
+<img src="samples.png" />
+
+
+***
+
 The code is divided into two kind of files: Python files regrouping the main functions, and Notebooks where the aforementioned functions are used to obtain the results presented in the article.
 
 #### Python files

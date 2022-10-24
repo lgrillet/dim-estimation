@@ -29,9 +29,9 @@ The code is divided into two kind of files: Python files regrouping the main fun
 #### Notebooks
 - **scales.ipynb:** We Compute the optimal scales for different dimensions and volumes.
 
-- **gaps.ipynb:** We compute the gaps for different dimensions.
+- **gaps.ipynb:** We compute the gaps for different dimensions (see the article).
 
-- **pairs.ipynb:** We compute the number of pairs required to obtain the desired rate of success with given scales.*
+- **pairs.ipynb:** We compute the number of pairs required to obtain the desired rate of success with given scales.
 
 - **examples.ipynb:** Two examples of generations of data sets and estimations of dimension.
 
@@ -39,6 +39,6 @@ The code is divided into two kind of files: Python files regrouping the main fun
 
 - **anova.ipynb:** We estimate the dimension of two manifolds with the estimator of the article and with ANOVA, using the same number of points.
 
-- **loglog.ipynb:** We compute the log-log plots.
+- **loglog.ipynb:** We compute the log-log plots to estimate the dimension of a given cloud of points.
 
 - **real_data.ipynb:** We test estimator on the data sets contained in the folders *monkey1*, *monkey2* and *monkey3*.
